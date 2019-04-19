@@ -3,25 +3,17 @@ using System.Runtime.InteropServices;
 
 namespace UnionType {
     public class Union<T1, T2> {
-        [StructLayout(LayoutKind.Explicit)]
-        private struct Data {
-            [FieldOffset(0)]
-            public T1 t1;
-            [FieldOffset(0)]
-            public T2 t2;
-        }
-        
         int index;
-        Data data;
+        object data;
 
         public Union(T1 val) {
             index = 0;
-            data = new Data { t1 = val };
+            data = val;
         }
 
         public Union(T2 val) {
             index = 1;
-            data = new Data { t2 = val };
+            data = val;
         }
 
         public bool Is<T>() {
@@ -40,14 +32,25 @@ namespace UnionType {
             throw new IndexOutOfRangeException();
         }
 
-        public override bool Equals(object obj) {
-            if (index == 0) {
-                return data.t1.Equals(obj);
+        public T Get<T>() {
+            var t = typeof(T);
+            if (typeof(T1) == t) {
+                return (T)data;
             }
 
-            if (index == 1) {
-                return data.t2.Equals(obj);
+            if (typeof(T2) == t) {
+                return (T)data;
             }
+            
+            throw new IndexOutOfRangeException();
+        }
+
+        public override string ToString() {
+            return data.ToString();
+        }
+
+        public override bool Equals(object obj) {
+            return data.Equals(obj);
 
             throw new IndexOutOfRangeException();
         }
@@ -57,27 +60,11 @@ namespace UnionType {
                 return false;
             }
 
-            if (index == 0) {
-                return data.t1.Equals(other.data.t1);
-            }
-
-            if (index == 1) {
-                return data.t2.Equals(other.data.t2);
-            }
-            
-            throw new IndexOutOfRangeException();
+            return data.Equals(other.data);
         }
 
         public override int GetHashCode() {
-            if (index == 0) {
-                return data.t1.GetHashCode();
-            }
-
-            if (index == 1) {
-                return data.t2.GetHashCode();
-            }
-            
-            throw new IndexOutOfRangeException();
+            return data.GetHashCode();
         }
 
         public static bool operator ==(Union<T1, T2> a, Union<T1, T2> b) {
@@ -93,18 +80,18 @@ namespace UnionType {
         }
 
         public static implicit operator T1(Union<T1, T2> union) {
-            return union.data.t1;
+            return (T1)union.data;
         }
 
         public static implicit operator T2(Union<T1, T2> union) {
-            return union.data.t2;
+            return (T2)union.data;
         }
 
-        public static explicit operator Union<T1, T2>(T1 val) {
+        public static implicit operator Union<T1, T2>(T1 val) {
             return new Union<T1, T2>(val);
         }
 
-        public static explicit operator Union<T1, T2>(T2 val) {
+        public static implicit operator Union<T1, T2>(T2 val) {
             return new Union<T1, T2>(val);
         }
     }
