@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Linq;
 using IntOrString = UnionType.Union<int, string>;
 
 namespace UnionType.Example {
@@ -16,6 +16,16 @@ namespace UnionType.Example {
             catch (Exception ex) {
                 Console.WriteLine("a is not string");
             }
+
+            IntOrString[] arr = {
+                1, 2, "clap", 4, 5, "clap",
+            };
+
+            var intsOnly = arr
+                .Where(v => v.Is<int>())
+                .Select(v => v.Get<int>()); // or just (int)v
+            
+            Console.WriteLine(string.Join(", ", intsOnly));
 
             void Print(IntOrString val) {
                 if (val.Is<int>()) {
