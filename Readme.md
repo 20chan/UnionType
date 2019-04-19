@@ -11,3 +11,14 @@ if (a.Is<int>()) {
     Console.WriteLine((int)a + 10);
 }
 ```
+
+
+
+
+
+
+
+type system of C# is so stupid please make it real
+
+https://github.com/dotnet/csharplang/issues/399
+
